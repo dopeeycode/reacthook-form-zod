@@ -22,6 +22,7 @@ const createUserFormScheme = z.object({
   name: z.string()
     .nonempty('O nome é obrigatório')
     .transform(name => {
+      // Pegar letras do primeiro indice e transformar em caixa alta
       return name.trim().split(' ').map(word => {
         return word[0].toLocaleUpperCase().concat(word.substring(1))
       }).join(' ')
@@ -40,7 +41,7 @@ const createUserFormScheme = z.object({
   techs: z.array(z.object({
     title: z.string().nonempty('O Titulo é obrigatório'),
     knowledge: z.coerce.number().min(1, 'Pelo menos 1 caractere').max(100),
-  }))
+  })).min(2, 'Insira pelo menos 2 tecnologias')
 })
 
 // Determiando está tipagem com base no tipo do ( createUserFormScheme )
@@ -79,7 +80,7 @@ export default function App(){
 
 
   return(
-    <main className="h-screen font-mono bg-zinc-950 text-zinc-300 gap-10 flex flex-col items-center justify-center">
+    <main className="h-screen font-mono bg-zinc-950 text-zinc-300 gap-10 flex items-center justify-center">
       <form 
         onSubmit={handleSubmit(createUser)} 
         className="flex flex-col gap-4 w-full max-w-xs"
@@ -175,7 +176,10 @@ export default function App(){
                 </div>
               </div>
             )
-          })}  
+          })} 
+          <span className='text-red-400 text-[.878rem] font-bold'>
+           {errors.techs?.message}
+          </span>  
           
         </div>
 
@@ -186,7 +190,7 @@ export default function App(){
           Salvar
         </button>
       </form>
-      <pre>{output}</pre>
+      <pre className='ml-20'>{output}</pre>
     </main>
   )
 }
