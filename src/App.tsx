@@ -14,9 +14,11 @@ import { useState } from 'react'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css';
+
 
 // Indexando o tipo de cada informação contida no formulario;
-
 
 const createUserFormScheme = z.object({
   name: z.string()
@@ -64,8 +66,22 @@ export default function App(){
   })
 
 
+  function alertMessageAfterCreatedUser() {
+    toast.success('Usuário criado com sucesso 😍', {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    });
+  }
+
   function createUser(data: any){
     setOutput(JSON.stringify(data, null, 2));
+    alertMessageAfterCreatedUser()
   }
 
 
@@ -150,6 +166,7 @@ export default function App(){
                 <div className='flex flex-1 flex-col gap-1'>
                   <input 
                     type="text" 
+                    placeholder='Tecnologia'
                     {...register(`techs.${index}.title`)}
                     className="outline-none bg-zinc-800 shadow-sm rounded h-10 px-3 "  
                   />
@@ -164,6 +181,7 @@ export default function App(){
                 <div className='flex flex-col gap-1'>
                   <input 
                     type="number" 
+                    placeholder='Nivel'
                     {...register(`techs.${index}.knowledge`)}
                     className="w-24 outline-none bg-zinc-800 shadow-sm rounded h-10 px-3 "  
                   />
@@ -189,6 +207,18 @@ export default function App(){
         >
           Salvar
         </button>
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="dark"
+        />
       </form>
       {output && <pre className='ml-20'>{output}</pre>}
     </main>
