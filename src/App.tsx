@@ -16,6 +16,7 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 // Indexando o tipo de cada informação contida no formulario;
+
 const createUserFormScheme = z.object({
   email: z.string()
     .nonempty('O e-mail é obrigatório')
@@ -24,11 +25,13 @@ const createUserFormScheme = z.object({
     .min(6, 'Míinimo 6 caracteres'),
 })
 
+type CreateUserFormData = z.infer<typeof createUserFormScheme>
+
 
 export default function App(){
   // Estado pra armazenar os dados retornado pela função do handleSubmit
   const [output, setOutput] = useState('')
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, formState: { errors } } = useForm<CreateUserFormData>({
     resolver: zodResolver(createUserFormScheme)
   })
 
