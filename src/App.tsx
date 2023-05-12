@@ -67,9 +67,9 @@ export default function App(){
 
 
   function alertMessageAfterCreatedUser() {
-    toast.success('Usuário criado com sucesso 😍', {
+    toast.success('😍 Usuário criado com sucesso.', {
       position: "top-right",
-      autoClose: 5000,
+      autoClose: 3000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
@@ -96,7 +96,7 @@ export default function App(){
 
 
   return(
-    <main className="h-screen font-mono bg-zinc-950 text-zinc-300 gap-10 flex items-center justify-center">
+    <main className="h-full lg:h-screen font-mono bg-zinc-950 text-zinc-300 gap-10 flex flex-col lg:flex-row items-center justify-center">
       <form 
         onSubmit={handleSubmit(createUser)} 
         className="flex flex-col gap-4 w-full max-w-xs"
@@ -207,18 +207,7 @@ export default function App(){
         >
           Salvar
         </button>
-        <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="dark"
-        />
+        <ToastContainer/>
       </form>
       {output && <pre className='ml-20'>{output}</pre>}
     </main>
