@@ -5,7 +5,7 @@ import { useState } from 'react'
 /**
  * To-do
  * 
- * [ ] Validação / transformações
+ * [x] Validação / transformações
  * [ ] Field Arrays
  * [ ] Upload de arquivos
  * [ ] Composition Pattern
@@ -18,18 +18,35 @@ import { zodResolver } from '@hookform/resolvers/zod'
 // Indexando o tipo de cada informação contida no formulario;
 
 const createUserFormScheme = z.object({
+  name: z.string()
+    .nonempty('O nome é obrigatório')
+    .transform(name => {
+      return name.trim().split(' ').map(word => {
+        return word[0].toLocaleUpperCase().concat(word.substring(1))
+      }).join(' ')
+    }),
   email: z.string()
     .nonempty('O e-mail é obrigatório')
-    .email('Formato de e-mail inválido'),
+    .email('Formato de e-mail inválido')
+    .toLowerCase()
+    .refine(email => {
+      // Logica que o zod não oferece, que não tem como padrão.
+      // Emails que termina com @rocketseat
+      return email.endsWith('@rocketseat.com.br')
+    }, 'Apenas e-mails da rocketset'),
   password: z.string()
     .min(6, 'Míinimo 6 caracteres'),
 })
+
+// Determiando está tipagem com base no tipo do ( createUserFormScheme )
 
 type CreateUserFormData = z.infer<typeof createUserFormScheme>
 
 
 export default function App(){
+  
   // Estado pra armazenar os dados retornado pela função do handleSubmit
+
   const [output, setOutput] = useState('')
   const { register, handleSubmit, formState: { errors } } = useForm<CreateUserFormData>({
     resolver: zodResolver(createUserFormScheme)
@@ -48,6 +65,20 @@ export default function App(){
         className="flex flex-col gap-4 w-full max-w-xs"
       >
         <div className="flex flex-col gap-1 font-semibold ">
+          <label className='text-zinc-50' htmlFor="name">Nome</label>
+          <input 
+            type="text" 
+            {...register('name')}
+            className="border border-zinc-200 bg-zinc-800 outline-none shadow-sm rounded h-10 px-3 "
+          />
+          { errors.name && 
+          <span 
+            className='text-red-400 text-[.878rem] font-bold'
+          > {errors.name.message}
+          </span>
+          }
+        </div>
+        <div className="flex flex-col gap-1 font-semibold ">
           <label className='text-zinc-50' htmlFor="email">E-mail</label>
           <input 
             type="email" 
@@ -56,9 +87,8 @@ export default function App(){
           />
           { errors.email && 
           <span 
-            className='text-red-400 text-sm font-bold'
-          >
-            {errors.email.message}
+            className='text-red-400 text-[.878rem] font-bold'
+          > {errors.email.message}
           </span>
           }
         </div>
@@ -72,9 +102,8 @@ export default function App(){
           />
           { errors.password && 
           <span 
-            className='text-red-400 text-sm font-bold'
-          >
-            {errors.password.message}
+            className='text-red-400 text-[.878rem] font-bold'
+          > {errors.password.message}
           </span>
           }
         </div>
