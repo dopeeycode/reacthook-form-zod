@@ -76,6 +76,7 @@ export default function App(){
       draggable: true,
       progress: undefined,
       theme: "dark",
+      className: "bg-zinc-900"
     });
   }
 
@@ -96,7 +97,8 @@ export default function App(){
 
 
   return(
-    <main className="h-full lg:h-screen font-mono bg-zinc-950 text-zinc-300 gap-10 flex flex-col lg:flex-row items-center justify-center">
+    <main className="h-auto mt-10 sm:mt-0 sm:h-screen font-mono bg-zinc-950 text-zinc-300 gap-10 flex flex-col md:flex-row items-center 
+    justify-center">
       <form 
         onSubmit={handleSubmit(createUser)} 
         className="flex flex-col gap-4 w-full max-w-xs"
@@ -209,7 +211,8 @@ export default function App(){
         </button>
         <ToastContainer/>
       </form>
-      {output && <pre className='ml-20'>{output}</pre>}
+      {output && <pre className='ml-20 '>{output}</pre>}
+      
     </main>
   )
 }
