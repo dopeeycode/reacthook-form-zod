@@ -190,7 +190,7 @@ export default function App(){
           Salvar
         </button>
       </form>
-      <pre className='ml-20'>{output}</pre>
+      {output && <pre className='ml-20'>{output}</pre>}
     </main>
   )
 }
