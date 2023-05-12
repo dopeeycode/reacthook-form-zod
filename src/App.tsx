@@ -11,11 +11,12 @@ import { useState } from 'react'
  * [ ] Composition Pattern
  */
 
-import { useForm } from 'react-hook-form'
+import { useForm, useFieldArray } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 // Indexando o tipo de cada informação contida no formulario;
+
 
 const createUserFormScheme = z.object({
   name: z.string()
@@ -32,10 +33,14 @@ const createUserFormScheme = z.object({
     .refine(email => {
       // Logica que o zod não oferece, que não tem como padrão.
       // Emails que termina com @rocketseat
-      return email.endsWith('@rocketseat.com.br')
-    }, 'Apenas e-mails da rocketset'),
+      return email.endsWith('@rocketseat.com')
+    }, 'Apenas e-mails da rocketseat'),
   password: z.string()
     .min(6, 'Míinimo 6 caracteres'),
+  techs: z.array(z.object({
+    title: z.string().nonempty('O Titulo é obrigatório'),
+    knowledge: z.coerce.number().min(1, 'Pelo menos 1 caractere').max(100),
+  }))
 })
 
 // Determiando está tipagem com base no tipo do ( createUserFormScheme )
@@ -48,7 +53,12 @@ export default function App(){
   // Estado pra armazenar os dados retornado pela função do handleSubmit
 
   const [output, setOutput] = useState('')
-  const { register, handleSubmit, formState: { errors } } = useForm<CreateUserFormData>({
+  const { 
+    register, 
+    handleSubmit, 
+    formState: { errors },
+    control,
+  } = useForm<CreateUserFormData>({
     resolver: zodResolver(createUserFormScheme)
   })
 
@@ -56,6 +66,16 @@ export default function App(){
   function createUser(data: any){
     setOutput(JSON.stringify(data, null, 2));
   }
+
+
+  function addNewTech(){
+   append({ title: '', knowledge: 0 })
+  }
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'techs',
+  })
 
 
   return(
@@ -69,7 +89,7 @@ export default function App(){
           <input 
             type="text" 
             {...register('name')}
-            className="border border-zinc-200 bg-zinc-800 outline-none shadow-sm rounded h-10 px-3 "
+            className="bg-zinc-800 outline-none shadow-sm rounded h-10 px-3 "
           />
           { errors.name && 
           <span 
@@ -83,7 +103,7 @@ export default function App(){
           <input 
             type="email" 
             {...register('email')}
-            className="border border-zinc-200 bg-zinc-800 outline-none shadow-sm rounded h-10 px-3 "
+            className="bg-zinc-800 outline-none shadow-sm rounded h-10 px-3 "
           />
           { errors.email && 
           <span 
@@ -98,7 +118,7 @@ export default function App(){
           <input 
             type="password" 
             {...register('password')}
-            className="border outline-none border-zinc-200 bg-zinc-800 shadow-sm rounded h-10 px-3 "  
+            className=" outline-none bg-zinc-800 shadow-sm rounded h-10 px-3 "  
           />
           { errors.password && 
           <span 
@@ -106,6 +126,57 @@ export default function App(){
           > {errors.password.message}
           </span>
           }
+        </div>
+
+        <div className="flex flex-col gap-1 font-semibold">
+          <label 
+            className='text-zinc-50 flex items-center justify-between' 
+            htmlFor="">
+              Tecnologias
+
+              <button 
+                type='button'
+                onClick={addNewTech}
+                className='text-emerald-500 text-sm'
+              >
+                Adicionar
+              </button>
+          </label>
+
+          {fields.map((field, index) => {
+            return(
+              <div className='flex gap-2' key={field.id}>
+                <div className='flex flex-1 flex-col gap-1'>
+                  <input 
+                    type="text" 
+                    {...register(`techs.${index}.title`)}
+                    className="outline-none bg-zinc-800 shadow-sm rounded h-10 px-3 "  
+                  />
+                  { errors.techs?.[index]?.title 
+                    && 
+                  <span className='text-red-400 text-[.878rem] font-bold'>
+                    {errors.techs?.[index]?.title?.message}
+                  </span> 
+                  }
+                </div>
+
+                <div className='flex flex-col gap-1'>
+                  <input 
+                    type="number" 
+                    {...register(`techs.${index}.knowledge`)}
+                    className="w-24 outline-none bg-zinc-800 shadow-sm rounded h-10 px-3 "  
+                  />
+                  { errors.techs?.[index]?.knowledge 
+                    && 
+                  <span className='text-red-400 text-[.878rem] font-bold'>
+                    {errors.techs?.[index]?.knowledge?.message}
+                  </span> 
+                  }
+                </div>
+              </div>
+            )
+          })}  
+          
         </div>
 
         <button 
